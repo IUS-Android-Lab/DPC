@@ -15,6 +15,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--Device Admin requires BIND_DEVICE_ADMIN permission to prevent other apps from abusing
+        the device admin app-->
+        <receiver android:name=".DeviceAdminReceiver"
+            android:label="@string/label_device_admin"
+            android:description="@string/description_device_admin"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <!-- Metadata required for becoming a device admin -->
+            <meta-data android:name="android.app.device_admin"
+                android:resource="@xml/device_admin_receiver" />
+            <!-- DEVICE_ADMIN_ENABLED is the primary intent action to be handled -->
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
