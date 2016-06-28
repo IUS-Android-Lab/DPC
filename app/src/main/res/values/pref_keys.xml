@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="key_pref_device_admin">pref_device_admin</string>
+    <string name="key_pref_device_owner">pref_device_owner</string>
+
+</resources>

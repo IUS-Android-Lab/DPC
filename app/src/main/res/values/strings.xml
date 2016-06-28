@@ -20,4 +20,11 @@
     <!-- Help Text -->
     <string name="info_admin_required">DPC must be admin to access different features.</string>
 
+    <!-- Preferences - Titles -->
+    <string name="title_pref_device_admin">Device Administrator</string>
+    <string name="title_pref_device_owner">Device Owner</string>
+
+    <!-- Preference Category - Titles -->
+    <string name="title_device_admin_status">Administration Status</string>
+
 </resources>

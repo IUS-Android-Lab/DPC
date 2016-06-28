@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/title_device_admin_status">
+
+        <SwitchPreference
+            android:id="@+id/pref_device_admin"
+            android:key="@string/key_pref_device_admin"
+            android:title="@string/title_pref_device_admin"
+            android:defaultValue="false"/>
+
+        <SwitchPreference
+            android:id="@+id/pref_device_owner"
+            android:key="@string/key_pref_device_owner"
+            android:title="@string/title_pref_device_owner"
+            android:defaultValue="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
