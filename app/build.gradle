@@ -37,4 +37,10 @@ dependencies {
     // Timber Library for logging
     compile 'com.jakewharton.timber:timber:4.1.2'
 
+    // Dagger 2 for dependency injection
+    compile 'com.google.dagger:dagger:2.2'
+    apt 'com.squareup:javapoet:1.7.0'
+    apt 'com.google.dagger:dagger-compiler:2.2'
+    provided 'javax.annotation:jsr250-api:1.0'
+
 }

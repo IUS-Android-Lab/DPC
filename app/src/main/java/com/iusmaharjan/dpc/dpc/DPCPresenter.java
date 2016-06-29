@@ -1,14 +1,15 @@
 package com.iusmaharjan.dpc.dpc;
 
-import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
-import com.iusmaharjan.dpc.DeviceAdminReceiver;
+import com.iusmaharjan.dpc.DPCApplication;
 import com.iusmaharjan.dpc.R;
+
+import javax.inject.Inject;
 
 import timber.log.Timber;
 
@@ -17,21 +18,21 @@ import timber.log.Timber;
  */
 public class DPCPresenter implements DPCInterface.Presenter{
 
-    private DevicePolicyManager devicePolicyManager;
-    private ComponentName deviceAdminReceiverComponentName;
     private DPCInterface.UserInterface userInterface;
     private String packageName;
-    private Context context;
+
+    @Inject
+    DevicePolicyManager devicePolicyManager;
+
+    @Inject
+    ComponentName deviceAdminReceiverComponentName;
+
+    @Inject
+    Context context;
 
     public DPCPresenter(Context context, DPCInterface.UserInterface userInterface) {
+        DPCApplication.getDPCComponent().inject(this);
         this.userInterface = userInterface;
-        this.context = context;
-
-        devicePolicyManager =
-                (DevicePolicyManager)context.getSystemService(Activity.DEVICE_POLICY_SERVICE);
-
-        deviceAdminReceiverComponentName = DeviceAdminReceiver.getComponentName(context);
-
         packageName = context.getPackageName();
     }
 
@@ -91,13 +92,9 @@ public class DPCPresenter implements DPCInterface.Presenter{
             // removeActiveAdmin is not synchronous and admin may be active even after method call
             devicePolicyManager.removeActiveAdmin(deviceAdminReceiverComponentName);
 
-            // Temporarily disable the button
-//            clearAdminButton.setEnabled(false);
-
             // Handler for posting back result
             final Handler mainHandler = new Handler();
 
-            //TODO: Declare in a better position
             // Create a new thread to wait for removeActiveAdmin to reflect changes
             Thread waitForAdminClearance = new Thread(new Runnable() {
                 @Override
@@ -107,9 +104,6 @@ public class DPCPresenter implements DPCInterface.Presenter{
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            // Re-enable the button
-//                            clearAdminButton.setEnabled(true);
-
                             // Update status
                             userInterface.setDeviceAdminPrefOff();
                         }
