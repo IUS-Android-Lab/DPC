@@ -1,4 +1,4 @@
-package com.iusmaharjan.dpc;
+package com.iusmaharjan.dpc.archive;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -10,10 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.iusmaharjan.dpc.DeviceAdminReceiver;
+import com.iusmaharjan.dpc.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 

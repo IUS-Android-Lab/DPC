@@ -1,4 +1,4 @@
-package com.iusmaharjan.dpc;
+package com.iusmaharjan.dpc.dpc;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
