@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Declares the security policies used in metadata.
+    The metadata provides additional information specific to the device administrator,
+    as parsed by the DeviceAdminInfo class.
+-->
+<device-admin>
+    <uses-policies>
+        <!--No policies defined right now-->
+    </uses-policies>
+</device-admin>

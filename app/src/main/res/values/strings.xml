@@ -1,3 +1,30 @@
 <resources>
+
+    <!-- Application Name -->
     <string name="app_name">DPC</string>
+
+    <!-- Label and Description for DeviceAdminReceiver -->
+    <string name="label_device_admin">Device Admin</string>
+    <string name="description_device_admin">Device Administrator</string>
+
+    <!-- Status of the DPC app -->
+    <string name="status_device_owner">DPC is the device owner. All features are available.</string>
+    <string name="status_device_admin">DPC is a device admin. All features may not be available.</string>
+    <string name="status_not_admin">DPC is not a device admin. Please set it as device admin.</string>
+
+    <!-- Button Text -->
+    <string name="button_clear_owner">Clear Owner</string>
+    <string name="button_set_admin">Set as Admin</string>
+    <string name="button_clear_admin">Remove from Admin</string>
+
+    <!-- Help Text -->
+    <string name="info_admin_required">DPC must be admin to access different features.</string>
+
+    <!-- Preferences - Titles -->
+    <string name="title_pref_device_admin">Device Administrator</string>
+    <string name="title_pref_device_owner">Device Owner</string>
+
+    <!-- Preference Category - Titles -->
+    <string name="title_device_admin_status">Administration Status</string>
+
 </resources>

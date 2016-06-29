@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 24
@@ -20,7 +21,26 @@ android {
 }
 
 dependencies {
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // JUnit Library for unit testing
     testCompile 'junit:junit:4.12'
+
+    // App Compat Library
     compile 'com.android.support:appcompat-v7:24.0.0'
+
+    // Butter Knife Library for view binding
+    compile 'com.jakewharton:butterknife:8.1.0'
+    apt 'com.jakewharton:butterknife-compiler:8.1.0'
+
+    // Timber Library for logging
+    compile 'com.jakewharton.timber:timber:4.1.2'
+
+    // Dagger 2 for dependency injection
+    compile 'com.google.dagger:dagger:2.2'
+    apt 'com.squareup:javapoet:1.7.0'
+    apt 'com.google.dagger:dagger-compiler:2.2'
+    provided 'javax.annotation:jsr250-api:1.0'
+
 }
