@@ -2,12 +2,16 @@ package com.iusmaharjan.dpc.dpc;
 
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageInstaller;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,7 +42,7 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
     private static final int SET_DEVICE_ADMIN_REQUEST = 1001;
 
-    private static final String URL_LF_MEETING_ROOM_APP = "https://www.dropbox.com/s/i7ohenua80ade5z/app-debug.apk";
+    private static final String URL_LF_MEETING_ROOM_APP = "https://www.dropbox.com/s/7506st3oi2vjoiq/TestDPC_3008.apk?dl=1";
 
     SwitchPreference prefDeviceAdmin;
     SwitchPreference prefDeviceOwner;
@@ -68,6 +72,19 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         prefLFMeetingRoomApp.setOnPreferenceClickListener(this);
 
         dpcPresenter.setInitialConditions();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
@@ -100,11 +117,13 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if(preference == prefLFMeetingRoomApp) {
-            try {
-                installSilently();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                installSilently();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+            download();
         }
         return false;
     }
@@ -164,7 +183,7 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
                 c.setDoOutput(false);
                 c.connect();
 
-                Timber.d("Connection:"+c.toString());
+//                Timber.d("Connection:"+c.toString());
 
                 File sdcard = Environment.getExternalStorageDirectory();
                 File outputFile = new File(sdcard, "app1.apk");
@@ -234,7 +253,7 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         }
     }
 
-    private void installSilently() throws IOException {
+    private void installSilently(final File file) throws IOException {
         PackageInstaller packageInstaller = getActivity().getPackageManager().getPackageInstaller();
         PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
         int sessionID = packageInstaller.createSession(params);
@@ -242,7 +261,6 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         PackageInstaller.Session session = packageInstaller.openSession(sessionID);
 
         long sizeBytes = 0;
-        final File file = new File(Environment.getExternalStorageDirectory(), "app.apk");
         if (file.isFile())
         {
             sizeBytes = file.length();
@@ -266,15 +284,63 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         in.close();
         out.close();
 
-        System.out.println("InstallApkViaPackageInstaller - Success: streamed apk " + total + " bytes");
-        Timber.d("InstallApkViaPackageInstaller - Success: streamed apk " + total + " bytes");
-
-//        session.commit(createIntentSender(getActivity(), sessionID));
+        session.commit(createIntentSender(getActivity(), sessionID));
 
         session.close();
     }
 
-    private IntentSender createIntentSender(Context context, int sessionID) {
-//        return
+
+    // TODO Replace with custom intent
+    private static IntentSender createIntentSender(Context context, int sessionId) {
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                sessionId,
+                new Intent(Intent.ACTION_INSTALL_PACKAGE),
+                0);
+        return pendingIntent.getIntentSender();
     }
+
+    DownloadManager downloadManager;
+    long downloadId;
+
+    private void download() {
+        downloadManager = (DownloadManager)getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(URL_LF_MEETING_ROOM_APP));
+//        request.setDestinationInExternalFilesDir(getActivity(),Environment.DIRECTORY_DOWNLOADS, "app.apk");
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"app.apk");
+
+        downloadId = downloadManager.enqueue(request);
+    }
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                long downloadId = intent.getLongExtra(
+                        DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(downloadId);
+                Cursor c = downloadManager.query(query);
+                if (c.moveToFirst()) {
+                    int columnIndex = c
+                            .getColumnIndex(DownloadManager.COLUMN_STATUS);
+                    String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    Uri uri = Uri.parse(uriString);
+                    String path = uri.getPath();
+                    if (DownloadManager.STATUS_SUCCESSFUL == c
+                            .getInt(columnIndex)) {
+                        Timber.d(path);
+                        try {
+                            installSilently(new File(path));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Timber.d("Download Successful");
+                    }
+                }
+            }
+        }
+    };
+
 }
