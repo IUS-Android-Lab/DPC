@@ -7,14 +7,22 @@
         <SwitchPreference
             android:id="@+id/pref_device_admin"
             android:key="@string/key_pref_device_admin"
-            android:title="@string/title_pref_device_admin"
-            android:defaultValue="false"/>
+            android:title="@string/title_pref_device_admin"/>
 
         <SwitchPreference
             android:id="@+id/pref_device_owner"
             android:key="@string/key_pref_device_owner"
-            android:title="@string/title_pref_device_owner"
-            android:defaultValue="false"/>
+            android:title="@string/title_pref_device_owner"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/title_device_available_apps">
+
+        <Preference
+            android:id="@+id/lf_meeting_room"
+            android:key="@string/key_pref_lf_meeting_room_app"
+            android:title="@string/title_pref_lf_meeting_room_app"/>
 
     </PreferenceCategory>
 
