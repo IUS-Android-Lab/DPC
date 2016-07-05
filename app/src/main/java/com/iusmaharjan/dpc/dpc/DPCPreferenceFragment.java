@@ -22,6 +22,8 @@ import android.preference.SwitchPreference;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.iusmaharjan.dpc.Application;
+import com.iusmaharjan.dpc.EnterpriseApplicationManager;
 import com.iusmaharjan.dpc.R;
 
 import java.io.File;
@@ -305,11 +307,17 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
     private void download() {
         downloadManager = (DownloadManager)getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(URL_LF_MEETING_ROOM_APP));
-//        request.setDestinationInExternalFilesDir(getActivity(),Environment.DIRECTORY_DOWNLOADS, "app.apk");
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,"app.apk");
 
-        downloadId = downloadManager.enqueue(request);
+        EnterpriseApplicationManager enterpriseApplicationManager = EnterpriseApplicationManager.getInstance();
+
+        for(Application app: enterpriseApplicationManager.getNotInstalledApps()) {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(app.getDownloadURL()));
+//        request.setDestinationInExternalFilesDir(getActivity(),Environment.DIRECTORY_DOWNLOADS, "app.apk");
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "app.apk");
+            request.setTitle("Downloading "+app.getApplicationName()+"...");
+
+            downloadId = downloadManager.enqueue(request);
+        }
     }
 
     BroadcastReceiver receiver = new BroadcastReceiver() {

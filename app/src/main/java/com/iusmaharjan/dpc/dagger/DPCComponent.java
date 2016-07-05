@@ -1,5 +1,6 @@
 package com.iusmaharjan.dpc.dagger;
 
+import com.iusmaharjan.dpc.EnterpriseApplicationManager;
 import com.iusmaharjan.dpc.dpc.DPCPresenter;
 
 import javax.inject.Singleton;
@@ -10,4 +11,6 @@ import dagger.Component;
 @Component(modules = {AppModule.class, DPCModule.class})
 public interface DPCComponent {
     void inject(DPCPresenter dpcPresenter);
+
+    void inject(EnterpriseApplicationManager enterpriseApplicationManager);
 }
