@@ -23,10 +23,10 @@
     <!-- Preferences - Titles -->
     <string name="title_pref_device_admin">Device Administrator</string>
     <string name="title_pref_device_owner">Device Owner</string>
-    <string name="title_pref_lf_meeting_room_app">Leapfrog Meeting Room App</string>
+    <string name="title_pref_download_apps">Download Enterprise Apps</string>
 
     <!-- Preference Category - Titles -->
     <string name="title_device_admin_status">Administration Status</string>
-    <string name="title_device_available_apps">Available Apps</string>
+    <string name="title_device_manage_app">App Management</string>
 
 </resources>

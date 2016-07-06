@@ -3,6 +3,6 @@
 
     <string name="key_pref_device_admin">pref_device_admin</string>
     <string name="key_pref_device_owner">pref_device_owner</string>
-    <string name="key_pref_lf_meeting_room_app">pref_lf_meeting_room_app</string>
+    <string name="key_pref_download_apps">pref_download_apps</string>
 
 </resources>

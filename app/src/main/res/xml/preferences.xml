@@ -17,12 +17,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/title_device_available_apps">
+        android:title="@string/title_device_manage_app">
 
         <Preference
             android:id="@+id/lf_meeting_room"
-            android:key="@string/key_pref_lf_meeting_room_app"
-            android:title="@string/title_pref_lf_meeting_room_app"/>
+            android:key="@string/key_pref_download_apps"
+            android:title="@string/title_pref_download_apps"/>
 
     </PreferenceCategory>
 

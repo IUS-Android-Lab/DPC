@@ -27,7 +27,7 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
     SwitchPreference prefDeviceAdmin;
     SwitchPreference prefDeviceOwner;
-    Preference prefLFMeetingRoomApp;
+    Preference prefDownloadApps;
 
     DPCInterface.Presenter dpcPresenter;
 
@@ -64,11 +64,11 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
         prefDeviceAdmin = (SwitchPreference)findPreference(getString(R.string.key_pref_device_admin));
         prefDeviceOwner = (SwitchPreference)findPreference(getString(R.string.key_pref_device_owner));
-        prefLFMeetingRoomApp = findPreference(getString(R.string.key_pref_lf_meeting_room_app));
+        prefDownloadApps = findPreference(getString(R.string.key_pref_download_apps));
 
         prefDeviceAdmin.setOnPreferenceChangeListener(this);
         prefDeviceOwner.setOnPreferenceChangeListener(this);
-        prefLFMeetingRoomApp.setOnPreferenceClickListener(this);
+        prefDownloadApps.setOnPreferenceClickListener(this);
 
         dpcPresenter.setInitialConditions();
 
@@ -119,7 +119,7 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if(preference == prefLFMeetingRoomApp) {
+        if(preference == prefDownloadApps) {
             EnterpriseApplicationManager applicationManager = EnterpriseApplicationManager.getInstance();
             for(Application application: applicationManager.getNotInstalledApps()) {
                 boundService.addToDownloadQueue(application);
@@ -159,4 +159,15 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         startActivityForResult(intent, SET_DEVICE_ADMIN_REQUEST);
     }
 
+    @Override
+    public void disableDownloadApp() {
+        Timber.d("disableDownloadApp");
+        prefDownloadApps.setEnabled(false);
+    }
+
+    @Override
+    public void enableDownloadApp() {
+        Timber.d("enableDownloadApp");
+        prefDownloadApps.setEnabled(true);
+    }
 }

@@ -13,6 +13,8 @@ public interface DPCInterface {
         void setDeviceOwnerPrefOff();
         void setDeviceOwnerPrefOn();
         void requestToSetAdmin(Intent intent);
+        void disableDownloadApp();
+        void enableDownloadApp();
     }
 
     interface Presenter {
