@@ -6,9 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -18,8 +16,6 @@ import com.iusmaharjan.dpc.AppInstallerService;
 import com.iusmaharjan.dpc.Application;
 import com.iusmaharjan.dpc.EnterpriseApplicationManager;
 import com.iusmaharjan.dpc.R;
-
-import java.io.File;
 
 import timber.log.Timber;
 
@@ -124,11 +120,6 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if(preference == prefLFMeetingRoomApp) {
-//            try {
-//                installSilently();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
             EnterpriseApplicationManager applicationManager = EnterpriseApplicationManager.getInstance();
             for(Application application: applicationManager.getNotInstalledApps()) {
                 boundService.addToDownloadQueue(application);

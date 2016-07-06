@@ -38,4 +38,9 @@ public class Application {
     public String getPackageId() {
         return packageId;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Application) && packageId.equals(((Application) obj).getPackageId());
+    }
 }

@@ -39,7 +39,7 @@ public class AppInstallerService extends Service {
     public AppInstallerService() {
     }
 
-    public static final Intent getAppInstallerServiceLaunchIntent(Context context) {
+    public static Intent getAppInstallerServiceLaunchIntent(Context context) {
         return new Intent(context, AppInstallerService.class);
     }
 
@@ -54,7 +54,7 @@ public class AppInstallerService extends Service {
         // Get Download Service
         downloadManager = (DownloadManager)this.getSystemService(Context.DOWNLOAD_SERVICE);
 
-        registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        registerReceiver(downloadStatusReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
     @Override
@@ -68,19 +68,15 @@ public class AppInstallerService extends Service {
     }
 
     public void addToDownloadQueue(Application application) {
-        downloadQueue.add(application);
-        downloadNextApp();
-    }
-
-    public void addToDownloadQueueImmediately(Application application) {
-        downloadQueue.add(0, application);
-        downloadNextApp();
+        if(notInQueue(application)) {
+            downloadQueue.add(application);
+            downloadNextApp();
+        }
     }
 
     private void downloadNextApp() {
         if(currentDownloading == null && !downloadQueue.isEmpty()) {
             currentDownloading = downloadQueue.remove(0);
-            // Start Current Download
             download();
         }
     }
@@ -92,33 +88,41 @@ public class AppInstallerService extends Service {
         downloadId = downloadManager.enqueue(request);
     }
 
-    BroadcastReceiver receiver = new BroadcastReceiver() {
+    BroadcastReceiver downloadStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
             String action = intent.getAction();
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                DownloadManager.Query query = new DownloadManager.Query();
                 long downloadId = intent.getLongExtra(
                         DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(downloadId);
+
                 Cursor c = downloadManager.query(query);
+                Timber.d("ACTION_DOWNLOAD_COMPLETE");
                 if (c.moveToFirst()) {
                     int columnIndex = c
                             .getColumnIndex(DownloadManager.COLUMN_STATUS);
-                    String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                    Uri uri = Uri.parse(uriString);
-                    String path = uri.getPath();
-                    if (DownloadManager.STATUS_SUCCESSFUL == c
-                            .getInt(columnIndex)) {
-                        Timber.d(path);
+                    if(c.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
+                        Timber.d("Download Successful");
+
                         try {
+                            String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                            Uri uri = Uri.parse(uriString);
+                            String path = uri.getPath();
+
                             installSilently(new File(path));
+
+                            //TODO delete file
+                            downloadManager.remove(downloadId);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        Timber.d("Download Successful");
                     }
                 }
+
+                c.close();
             }
         }
     };
@@ -182,20 +186,21 @@ public class AppInstallerService extends Service {
         return pendingIntent.getIntentSender();
     }
 
-    /**
-     * Installs APK with prompt
-     */
-    private void installAPK(File file) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    private boolean notInQueue(Application application) {
+        for(Application app: downloadQueue) {
+            if (app.equals(application)) {
+                return false;
+            }
+        }
+        return !application.equals(currentDownloading);
     }
 
+    /**
+     * Service Binder Class
+     */
     public class ServiceBinder extends Binder {
         public AppInstallerService getService() {
             return AppInstallerService.this;
         }
     }
-
 }
