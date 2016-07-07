@@ -1,4 +1,4 @@
-package com.iusmaharjan.dpc;
+package com.iusmaharjan.dpc.appinstaller;
 
 import java.util.List;
 
@@ -7,6 +7,10 @@ import java.util.List;
  */
 public interface ApplicationListSource {
 
+    /**
+     * provide list of applications from the source
+     * @return list of applications
+     */
     List<Application> getApplicationList();
 
 }

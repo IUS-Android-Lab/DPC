@@ -12,9 +12,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 
-import com.iusmaharjan.dpc.AppInstallerService;
-import com.iusmaharjan.dpc.Application;
-import com.iusmaharjan.dpc.EnterpriseApplicationManager;
+import com.iusmaharjan.dpc.appinstaller.AppInstallerService;
+import com.iusmaharjan.dpc.appinstaller.Application;
+import com.iusmaharjan.dpc.appinstaller.EnterpriseApplicationManager;
 import com.iusmaharjan.dpc.R;
 
 import timber.log.Timber;

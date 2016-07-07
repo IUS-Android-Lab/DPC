@@ -1,4 +1,4 @@
-package com.iusmaharjan.dpc;
+package com.iusmaharjan.dpc.appinstaller;
 
 import android.app.DownloadManager;
 import android.app.PendingIntent;
@@ -25,25 +25,57 @@ import java.util.List;
 
 import timber.log.Timber;
 
+/**
+ * Background Service that downloads and installs apps.
+ * It maintains a queue of apps to be installed and installs them one at a time.
+ */
 public class AppInstallerService extends Service {
 
+    /**
+     * Queue of apps to be downloaded
+     */
     List<Application> downloadQueue;
 
+    /**
+     * Current app being downloaded
+     */
     Application currentDownloading;
 
+    /**
+     * DownloadManager is used to download apk
+     */
     DownloadManager downloadManager;
+
+    /**
+     * ID of app being enqueued in Download Manager
+     */
     long downloadId;
 
+    /**
+     * Binder to bind service
+     */
     private IBinder serviceBinder = new ServiceBinder();
 
+    /**
+     * Default Constructor
+     */
     public AppInstallerService() {
     }
 
+    /**
+     * Provides intent to launch {@link AppInstallerService}
+     * @param context Context from where the service is being launched
+     * @return Intent to launch service
+     */
     public static Intent getAppInstallerServiceLaunchIntent(Context context) {
         return new Intent(context, AppInstallerService.class);
     }
 
 
+    /**
+     * Initialization of {@link AppInstallerService#downloadQueue} and {@link AppInstallerService#downloadManager}
+     * downloadStatusReceiver registered.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -67,6 +99,10 @@ public class AppInstallerService extends Service {
         return super.onUnbind(intent);
     }
 
+    /**
+     * Adds application to download queue after checking it is not present in the queue and starts download
+     * @param application {@link Application} to be added to the queue
+     */
     public void addToDownloadQueue(Application application) {
         if(notInQueue(application)) {
             downloadQueue.add(application);
@@ -74,6 +110,10 @@ public class AppInstallerService extends Service {
         }
     }
 
+    /**
+     * Checks if no apps are being downloaded currently. If not, first item is removed from
+     * {@link AppInstallerService#downloadQueue} and download provided for download
+     */
     private void downloadNextApp() {
         if(currentDownloading == null && !downloadQueue.isEmpty()) {
             currentDownloading = downloadQueue.remove(0);
@@ -81,6 +121,10 @@ public class AppInstallerService extends Service {
         }
     }
 
+    /**
+     * Enqueues {@link AppInstallerService#currentDownloading} in {@link AppInstallerService#downloadManager}
+     * to start download
+     */
     private void download() {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentDownloading.getDownloadURL()));
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "app.apk");
@@ -88,12 +132,17 @@ public class AppInstallerService extends Service {
         downloadId = downloadManager.enqueue(request);
     }
 
+    /**
+     * Receiver for the event when download completes
+     */
     BroadcastReceiver downloadStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            // Check if action is that of download complete
             String action = intent.getAction();
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+
+                // Query for download id
                 DownloadManager.Query query = new DownloadManager.Query();
                 long downloadId = intent.getLongExtra(
                         DownloadManager.EXTRA_DOWNLOAD_ID, 0);
@@ -112,9 +161,10 @@ public class AppInstallerService extends Service {
                             Uri uri = Uri.parse(uriString);
                             String path = uri.getPath();
 
+                            // install the app
                             installSilently(new File(path));
 
-                            //TODO delete file
+                            // delete APK
                             downloadManager.remove(downloadId);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -127,6 +177,11 @@ public class AppInstallerService extends Service {
         }
     };
 
+    /**
+     * Silently installs the provided app
+     * @param file APK file to be installed
+     * @throws IOException Exception while installing
+     */
     private void installSilently(final File file) throws IOException {
 
         // Get package installer
@@ -176,6 +231,12 @@ public class AppInstallerService extends Service {
 
     }
 
+    /**
+     * {@link IntentSender} for silently installing the app
+     * @param context Context of the installer
+     * @param sessionId Session id
+     * @return Intent Sender
+     */
     // TODO Replace with custom intent
     private static IntentSender createIntentSender(Context context, int sessionId) {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -186,6 +247,11 @@ public class AppInstallerService extends Service {
         return pendingIntent.getIntentSender();
     }
 
+    /**
+     * Checks if the {@link Application} is in queue
+     * @param application Application provided
+     * @return  If the app is not in queue, returns true. Else, false.
+     */
     private boolean notInQueue(Application application) {
         for(Application app: downloadQueue) {
             if (app.equals(application)) {

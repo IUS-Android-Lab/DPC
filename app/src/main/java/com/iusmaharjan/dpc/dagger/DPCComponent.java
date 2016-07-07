@@ -1,6 +1,6 @@
 package com.iusmaharjan.dpc.dagger;
 
-import com.iusmaharjan.dpc.EnterpriseApplicationManager;
+import com.iusmaharjan.dpc.appinstaller.EnterpriseApplicationManager;
 import com.iusmaharjan.dpc.dpc.DPCPresenter;
 
 import javax.inject.Singleton;
