@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iusmaharjan.dpc">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
+
     <application
         android:name=".DPCApplication"
         android:allowBackup="true"
@@ -9,7 +14,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".dpc.DPCActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,8 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".archive.MainActivity"/>
+        <activity android:name=".archive.MainActivity" />
 
         <!--
         Device Admin requires BIND_DEVICE_ADMIN permission to prevent other apps from abusing
@@ -40,6 +43,10 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".appinstaller.AppInstallerService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>
