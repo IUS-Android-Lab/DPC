@@ -2,6 +2,7 @@ package com.iusmaharjan.dpc.dpc;
 
 
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -13,12 +14,15 @@ import com.iusmaharjan.dpc.R;
 import timber.log.Timber;
 
 public class DPCPreferenceFragment extends PreferenceFragment implements
-        Preference.OnPreferenceChangeListener, DPCInterface.UserInterface{
+        Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener,
+        DPCInterface.UserInterface{
 
     private static final int SET_DEVICE_ADMIN_REQUEST = 1001;
+    private static final int PROVISION_MANAGED_PROFILE_REQUEST = 1002;
 
     SwitchPreference prefDeviceAdmin;
     SwitchPreference prefDeviceOwner;
+    Preference prefProvisionManagedProfile;
 
     DPCInterface.Presenter dpcPresenter;
 
@@ -37,9 +41,11 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
         prefDeviceAdmin = (SwitchPreference)findPreference(getString(R.string.key_pref_device_admin));
         prefDeviceOwner = (SwitchPreference)findPreference(getString(R.string.key_pref_device_owner));
+        prefProvisionManagedProfile = findPreference(getString(R.string.key_pref_provision_managed_profile));
 
         prefDeviceAdmin.setOnPreferenceChangeListener(this);
         prefDeviceOwner.setOnPreferenceChangeListener(this);
+        prefProvisionManagedProfile.setOnPreferenceClickListener(this);
 
         dpcPresenter.setInitialConditions();
     }
@@ -67,6 +73,14 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
             if(!(boolean)newValue) {
                 dpcPresenter.unregisterOwner();
             }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if(preference == prefProvisionManagedProfile) {
+            dpcPresenter.createWorkProfile();
         }
         return false;
     }
@@ -100,5 +114,11 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     public void requestToSetAdmin(Intent intent) {
         Timber.d("requestToSetAdmin");
         startActivityForResult(intent, SET_DEVICE_ADMIN_REQUEST);
+    }
+
+    @Override
+    public void requestToCreateProfile(Intent intent) {
+        Timber.d("requestToCreateProfile");
+        startActivityForResult(intent, PROVISION_MANAGED_PROFILE_REQUEST);
     }
 }

@@ -2,6 +2,7 @@ package com.iusmaharjan.dpc;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 
 /**
  * Broadcast Receiver that handles android.app.action.DEVICE_ADMIN_ENABLED intent action
@@ -21,4 +22,8 @@ public class DeviceAdminReceiver extends android.app.admin.DeviceAdminReceiver {
         return new ComponentName(context, DeviceAdminReceiver.class);
     }
 
+    @Override
+    public void onProfileProvisioningComplete(Context context, Intent intent) {
+        super.onProfileProvisioningComplete(context, intent);
+    }
 }

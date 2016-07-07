@@ -23,6 +23,7 @@
     <!-- Preferences - Titles -->
     <string name="title_pref_device_admin">Device Administrator</string>
     <string name="title_pref_device_owner">Device Owner</string>
+    <string name="title_pref_provision_managed_profile">Create Work Profile</string>
 
     <!-- Preference Category - Titles -->
     <string name="title_device_admin_status">Administration Status</string>

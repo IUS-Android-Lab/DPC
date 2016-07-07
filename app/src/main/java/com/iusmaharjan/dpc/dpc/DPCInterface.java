@@ -13,6 +13,7 @@ public interface DPCInterface {
         void setDeviceOwnerPrefOff();
         void setDeviceOwnerPrefOn();
         void requestToSetAdmin(Intent intent);
+        void requestToCreateProfile(Intent intent);
     }
 
     interface Presenter {
@@ -20,6 +21,7 @@ public interface DPCInterface {
         void registerAdmin();
         void unregisterAdmin();
         void unregisterOwner();
+        void createWorkProfile();
     }
 
 }

@@ -58,6 +58,15 @@ public class DPCPresenter implements DPCInterface.Presenter{
 
     }
 
+
+    @Override
+    public void createWorkProfile() {
+        Intent intent = new Intent(DevicePolicyManager.ACTION_PROVISION_MANAGED_PROFILE);
+        intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME, deviceAdminReceiverComponentName);
+        userInterface.requestToCreateProfile(intent);
+
+    }
+
     @Override
     public void unregisterOwner() {
         // Check if the app is owner and clear device owner if true
