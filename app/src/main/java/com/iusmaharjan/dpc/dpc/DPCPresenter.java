@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.widget.Toast;
 
 import com.iusmaharjan.dpc.DPCApplication;
 import com.iusmaharjan.dpc.R;
@@ -65,10 +64,7 @@ public class DPCPresenter implements DPCInterface.Presenter{
             Intent intent = new Intent(DevicePolicyManager.ACTION_PROVISION_MANAGED_PROFILE);
             intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME, deviceAdminReceiverComponentName);
             userInterface.requestToCreateProfile(intent);
-        } else  {
-            Toast.makeText(context, "This is profile owner", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
@@ -97,6 +93,11 @@ public class DPCPresenter implements DPCInterface.Presenter{
         } else {
             Timber.d("Is not Device Owner");
             userInterface.setDeviceOwnerPrefOff();
+        }
+
+        if(devicePolicyManager.isProfileOwnerApp(packageName)) {
+            Timber.d("Is Profile Owner App");
+            userInterface.disableCreateWorkProfile();
         }
     }
 

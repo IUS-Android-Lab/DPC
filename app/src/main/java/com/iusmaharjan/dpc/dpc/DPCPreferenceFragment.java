@@ -118,6 +118,12 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void disableCreateWorkProfile() {
+        Timber.d("disableCreateWorkProfile");
+        prefProvisionManagedProfile.setEnabled(false);
+    }
+
+    @Override
     public void requestToSetAdmin(Intent intent) {
         Timber.d("requestToSetAdmin");
         startActivityForResult(intent, SET_DEVICE_ADMIN_REQUEST);
