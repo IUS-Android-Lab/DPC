@@ -3,6 +3,7 @@
 
     <string name="key_pref_device_admin">pref_device_admin</string>
     <string name="key_pref_device_owner">pref_device_owner</string>
+    <string name="key_pref_provision_managed_profile">pref_provision_managed_profile</string>
     <string name="key_pref_download_apps">pref_download_apps</string>
 
 </resources>

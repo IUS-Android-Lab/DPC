@@ -12,7 +12,9 @@ public interface DPCInterface {
         void setDeviceAdminPrefOn();
         void setDeviceOwnerPrefOff();
         void setDeviceOwnerPrefOn();
+        void disableCreateWorkProfile();
         void requestToSetAdmin(Intent intent);
+        void requestToCreateProfile(Intent intent);
         void disableDownloadApp();
         void enableDownloadApp();
     }
@@ -22,6 +24,7 @@ public interface DPCInterface {
         void registerAdmin();
         void unregisterAdmin();
         void unregisterOwner();
+        void createWorkProfile();
     }
 
 }

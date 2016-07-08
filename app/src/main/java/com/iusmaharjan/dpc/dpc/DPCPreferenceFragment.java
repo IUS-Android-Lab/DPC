@@ -12,10 +12,10 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 
+import com.iusmaharjan.dpc.R;
 import com.iusmaharjan.dpc.appinstaller.AppInstallerService;
 import com.iusmaharjan.dpc.appinstaller.Application;
 import com.iusmaharjan.dpc.appinstaller.EnterpriseApplicationManager;
-import com.iusmaharjan.dpc.R;
 
 import timber.log.Timber;
 
@@ -24,9 +24,11 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         DPCInterface.UserInterface {
 
     private static final int SET_DEVICE_ADMIN_REQUEST = 1001;
+    private static final int PROVISION_MANAGED_PROFILE_REQUEST = 10020;
 
     SwitchPreference prefDeviceAdmin;
     SwitchPreference prefDeviceOwner;
+    Preference prefProvisionManagedProfile;
     Preference prefDownloadApps;
 
     DPCInterface.Presenter dpcPresenter;
@@ -64,10 +66,12 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
         prefDeviceAdmin = (SwitchPreference)findPreference(getString(R.string.key_pref_device_admin));
         prefDeviceOwner = (SwitchPreference)findPreference(getString(R.string.key_pref_device_owner));
+        prefProvisionManagedProfile = findPreference(getString(R.string.key_pref_provision_managed_profile));
         prefDownloadApps = findPreference(getString(R.string.key_pref_download_apps));
 
         prefDeviceAdmin.setOnPreferenceChangeListener(this);
         prefDeviceOwner.setOnPreferenceChangeListener(this);
+        prefProvisionManagedProfile.setOnPreferenceClickListener(this);
         prefDownloadApps.setOnPreferenceClickListener(this);
 
         dpcPresenter.setInitialConditions();
@@ -98,6 +102,12 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
             } else {
                 setDeviceAdminPrefOff();
             }
+        } else if(resultCode == PROVISION_MANAGED_PROFILE_REQUEST) {
+            if (requestCode == Activity.RESULT_OK) {
+                Timber.d("Successful");
+            } else {
+                Timber.d("Unsuccessful");
+            }
         }
     }
 
@@ -119,7 +129,9 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if(preference == prefDownloadApps) {
+        if(preference == prefProvisionManagedProfile) {
+            dpcPresenter.createWorkProfile();
+        } else if(preference == prefDownloadApps) {
             EnterpriseApplicationManager applicationManager = EnterpriseApplicationManager.getInstance();
             for(Application application: applicationManager.getNotInstalledApps()) {
                 boundService.addToDownloadQueue(application);
@@ -154,9 +166,22 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     }
 
     @Override
+    public void disableCreateWorkProfile() {
+        Timber.d("disableCreateWorkProfile");
+        prefProvisionManagedProfile.setEnabled(false);
+    }
+
+    @Override
     public void requestToSetAdmin(Intent intent) {
         Timber.d("requestToSetAdmin");
         startActivityForResult(intent, SET_DEVICE_ADMIN_REQUEST);
+    }
+
+    @Override
+    public void requestToCreateProfile(Intent intent) {
+        Timber.d("requestToCreateProfile");
+        startActivityForResult(intent, PROVISION_MANAGED_PROFILE_REQUEST);
+        getActivity().finish();
     }
 
     @Override

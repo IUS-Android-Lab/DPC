@@ -14,6 +14,11 @@
             android:key="@string/key_pref_device_owner"
             android:title="@string/title_pref_device_owner"/>
 
+        <Preference
+            android:id="@+id/pref_provision_managed_profile"
+            android:key="@string/key_pref_provision_managed_profile"
+            android:title="@string/title_pref_provision_managed_profile"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -1,7 +1,9 @@
 package com.iusmaharjan.dpc;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 
 /**
  * Broadcast Receiver that handles android.app.action.DEVICE_ADMIN_ENABLED intent action
@@ -21,4 +23,12 @@ public class DeviceAdminReceiver extends android.app.admin.DeviceAdminReceiver {
         return new ComponentName(context, DeviceAdminReceiver.class);
     }
 
+    @Override
+    public void onProfileProvisioningComplete(Context context, Intent intent) {
+        DevicePolicyManager manager = (DevicePolicyManager) context.getSystemService(
+                Context.DEVICE_POLICY_SERVICE);
+        ComponentName componentName = DeviceAdminReceiver.getComponentName(context);
+        manager.setProfileName(componentName, context.getString(R.string.work_profile_name));
+        manager.setProfileEnabled(componentName);
+    }
 }

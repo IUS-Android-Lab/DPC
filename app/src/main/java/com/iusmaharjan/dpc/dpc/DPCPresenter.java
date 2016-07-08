@@ -55,7 +55,16 @@ public class DPCPresenter implements DPCInterface.Presenter{
         unregisterOwner();
 
         removeActiveAdmin();
+    }
 
+
+    @Override
+    public void createWorkProfile() {
+        if(!devicePolicyManager.isProfileOwnerApp(packageName)) {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_PROVISION_MANAGED_PROFILE);
+            intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME, deviceAdminReceiverComponentName);
+            userInterface.requestToCreateProfile(intent);
+        }
     }
 
     @Override
@@ -91,6 +100,11 @@ public class DPCPresenter implements DPCInterface.Presenter{
             userInterface.setDeviceOwnerPrefOff();
             // FIXME Handle in better way for larger group
             userInterface.disableDownloadApp();
+        }
+
+        if(devicePolicyManager.isProfileOwnerApp(packageName)) {
+            Timber.d("Is Profile Owner App");
+            userInterface.disableCreateWorkProfile();
         }
     }
 

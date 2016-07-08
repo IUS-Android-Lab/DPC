@@ -2,6 +2,7 @@
 
     <!-- Application Name -->
     <string name="app_name">DPC</string>
+    <string name="work_profile_name">DPC Work</string>
 
     <!-- Label and Description for DeviceAdminReceiver -->
     <string name="label_device_admin">Device Admin</string>
@@ -23,6 +24,7 @@
     <!-- Preferences - Titles -->
     <string name="title_pref_device_admin">Device Administrator</string>
     <string name="title_pref_device_owner">Device Owner</string>
+    <string name="title_pref_provision_managed_profile">Create Work Profile</string>
     <string name="title_pref_download_apps">Download Enterprise Apps</string>
 
     <!-- Preference Category - Titles -->
