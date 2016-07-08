@@ -2,6 +2,7 @@
 
     <!-- Application Name -->
     <string name="app_name">DPC</string>
+    <string name="work_profile_name">DPC Work</string>
 
     <!-- Label and Description for DeviceAdminReceiver -->
     <string name="label_device_admin">Device Admin</string>

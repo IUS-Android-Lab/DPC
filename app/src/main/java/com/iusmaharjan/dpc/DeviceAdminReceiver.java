@@ -1,5 +1,6 @@
 package com.iusmaharjan.dpc;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,10 @@ public class DeviceAdminReceiver extends android.app.admin.DeviceAdminReceiver {
 
     @Override
     public void onProfileProvisioningComplete(Context context, Intent intent) {
-        super.onProfileProvisioningComplete(context, intent);
+        DevicePolicyManager manager = (DevicePolicyManager) context.getSystemService(
+                Context.DEVICE_POLICY_SERVICE);
+        ComponentName componentName = DeviceAdminReceiver.getComponentName(context);
+        manager.setProfileName(componentName, context.getString(R.string.work_profile_name));
+        manager.setProfileEnabled(componentName);
     }
 }

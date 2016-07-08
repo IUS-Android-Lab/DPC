@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+import android.widget.Toast;
 
 import com.iusmaharjan.dpc.R;
 
@@ -18,7 +19,7 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         DPCInterface.UserInterface{
 
     private static final int SET_DEVICE_ADMIN_REQUEST = 1001;
-    private static final int PROVISION_MANAGED_PROFILE_REQUEST = 1002;
+    private static final int PROVISION_MANAGED_PROFILE_REQUEST = 10020;
 
     SwitchPreference prefDeviceAdmin;
     SwitchPreference prefDeviceOwner;
@@ -57,6 +58,12 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
                 setDeviceAdminPrefOn();
             } else {
                 setDeviceAdminPrefOff();
+            }
+        } else if(resultCode == PROVISION_MANAGED_PROFILE_REQUEST) {
+            if (requestCode == Activity.RESULT_OK) {
+                Timber.d("Successful");
+            } else {
+                Timber.d("Unsuccessful");
             }
         }
     }
@@ -120,5 +127,6 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     public void requestToCreateProfile(Intent intent) {
         Timber.d("requestToCreateProfile");
         startActivityForResult(intent, PROVISION_MANAGED_PROFILE_REQUEST);
+        getActivity().finish();
     }
 }
