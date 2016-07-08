@@ -2,21 +2,26 @@ package com.iusmaharjan.dpc.dpc;
 
 
 import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.widget.Toast;
 
 import com.iusmaharjan.dpc.R;
+import com.iusmaharjan.dpc.appinstaller.AppInstallerService;
+import com.iusmaharjan.dpc.appinstaller.Application;
+import com.iusmaharjan.dpc.appinstaller.EnterpriseApplicationManager;
 
 import timber.log.Timber;
 
 public class DPCPreferenceFragment extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener,
-        DPCInterface.UserInterface{
+        DPCInterface.UserInterface {
 
     private static final int SET_DEVICE_ADMIN_REQUEST = 1001;
     private static final int PROVISION_MANAGED_PROFILE_REQUEST = 10020;
@@ -24,8 +29,27 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     SwitchPreference prefDeviceAdmin;
     SwitchPreference prefDeviceOwner;
     Preference prefProvisionManagedProfile;
+    Preference prefDownloadApps;
 
     DPCInterface.Presenter dpcPresenter;
+
+    AppInstallerService boundService;
+    boolean mServiceBound;
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            AppInstallerService.ServiceBinder serviceBinder =
+                    (AppInstallerService.ServiceBinder)iBinder;
+            boundService = serviceBinder.getService();
+            mServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mServiceBound = false;
+        }
+    };
 
     public DPCPreferenceFragment() {
 
@@ -43,12 +67,31 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         prefDeviceAdmin = (SwitchPreference)findPreference(getString(R.string.key_pref_device_admin));
         prefDeviceOwner = (SwitchPreference)findPreference(getString(R.string.key_pref_device_owner));
         prefProvisionManagedProfile = findPreference(getString(R.string.key_pref_provision_managed_profile));
+        prefDownloadApps = findPreference(getString(R.string.key_pref_download_apps));
 
         prefDeviceAdmin.setOnPreferenceChangeListener(this);
         prefDeviceOwner.setOnPreferenceChangeListener(this);
         prefProvisionManagedProfile.setOnPreferenceClickListener(this);
+        prefDownloadApps.setOnPreferenceClickListener(this);
 
         dpcPresenter.setInitialConditions();
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = AppInstallerService.getAppInstallerServiceLaunchIntent(getActivity());
+        getActivity().startService(intent);
+        getActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(mServiceBound) {
+            getActivity().unbindService(mServiceConnection);
+        }
     }
 
     @Override
@@ -88,6 +131,11 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
     public boolean onPreferenceClick(Preference preference) {
         if(preference == prefProvisionManagedProfile) {
             dpcPresenter.createWorkProfile();
+        } else if(preference == prefDownloadApps) {
+            EnterpriseApplicationManager applicationManager = EnterpriseApplicationManager.getInstance();
+            for(Application application: applicationManager.getNotInstalledApps()) {
+                boundService.addToDownloadQueue(application);
+            }
         }
         return false;
     }
@@ -134,5 +182,17 @@ public class DPCPreferenceFragment extends PreferenceFragment implements
         Timber.d("requestToCreateProfile");
         startActivityForResult(intent, PROVISION_MANAGED_PROFILE_REQUEST);
         getActivity().finish();
+    }
+
+    @Override
+    public void disableDownloadApp() {
+        Timber.d("disableDownloadApp");
+        prefDownloadApps.setEnabled(false);
+    }
+
+    @Override
+    public void enableDownloadApp() {
+        Timber.d("enableDownloadApp");
+        prefDownloadApps.setEnabled(true);
     }
 }

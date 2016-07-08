@@ -73,6 +73,8 @@ public class DPCPresenter implements DPCInterface.Presenter{
         if(devicePolicyManager.isDeviceOwnerApp(packageName)) {
             devicePolicyManager.clearDeviceOwnerApp(packageName);
             userInterface.setDeviceOwnerPrefOff();
+            // FIXME Handle in better way for larger group
+            userInterface.disableDownloadApp();
         }
     }
 
@@ -85,14 +87,19 @@ public class DPCPresenter implements DPCInterface.Presenter{
         } else {
             Timber.d("Is not Device Admin");
             userInterface.setDeviceAdminPrefOff();
+
         }
 
         if(devicePolicyManager.isDeviceOwnerApp(packageName)) {
             Timber.d("Is Device Owner");
             userInterface.setDeviceOwnerPrefOn();
+            // FIXME Handle in better way for larger group
+            userInterface.enableDownloadApp();
         } else {
             Timber.d("Is not Device Owner");
             userInterface.setDeviceOwnerPrefOff();
+            // FIXME Handle in better way for larger group
+            userInterface.disableDownloadApp();
         }
 
         if(devicePolicyManager.isProfileOwnerApp(packageName)) {

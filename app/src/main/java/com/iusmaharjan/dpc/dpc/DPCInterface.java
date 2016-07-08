@@ -15,6 +15,8 @@ public interface DPCInterface {
         void disableCreateWorkProfile();
         void requestToSetAdmin(Intent intent);
         void requestToCreateProfile(Intent intent);
+        void disableDownloadApp();
+        void enableDownloadApp();
     }
 
     interface Presenter {
